@@ -16,7 +16,8 @@
         <% if (hotels[i].minPrice === null){ %>
           <p> All Rooms Booked </p>
         <%} else  { %>
-          <p><%= hotels[i].minPrice %></p>
+          <p> Price: <%= hotels[i].minPrice %></p>
+          <p> Source: <%= hotels[i].minPriceSource %></p>
         <% } %>
 
 
