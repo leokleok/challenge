@@ -63,6 +63,7 @@ app.get('/', function(req, res) {
 
       priceDatas.forEach(function(priceData) {
         var price = priceData.data[hotelId];
+        
         if (price) {
           if (minPrice === null || price < minPrice) {
             minPrice = price;
