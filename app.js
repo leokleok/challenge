@@ -15,64 +15,42 @@ app.set('view engine', 'ejs');
 app.get('/', function(req, res) {
   var count = 0;
   var hotelsData;
-  var price1Data;
-  var price2Data;
-  var price3Data;
 
   request.get("https://api.myjson.com/bins/1c80k", function (err, response, body) {
     hotelsData = JSON.parse(body);
     count += 1;
     processData();
   });
-  request.get("https://api.myjson.com/bins/2tlb8", function (err, response, body) {
-    price1Data = {
-      name: '2tlb8',
-      data: JSON.parse(body)
-    };
-    count += 1;
-    processData();
+
+  prices = {};
+  var pricesApis = ['2tlb8','42lok','15ktg'];
+
+   pricesApis.forEach(function(priceApi){
+     request.get("https://api.myjson.com/bins/" + priceApi, function (err, response, body) {
+      prices[priceApi] = JSON.parse(body);
+
+       count += 1;
+       processData();
+     });
   });
-  request.get("https://api.myjson.com/bins/42lok", function (err, response, body) {
-    price2Data = {
-      name: '42lok',
-      data: JSON.parse(body)
-    };
-    count += 1;
-    processData();
-  });
-  request.get("https://api.myjson.com/bins/15ktg", function (err, response, body) {
-    price3Data = {
-      name: '15ktg',
-      data: JSON.parse(body)
-    };
-    count += 1;
-    processData();
-  });
+
 
   function processData() {
     if (count !== 4) {
       return;
     }
 
-    var priceDatas = [price1Data, price2Data, price3Data];
-
     hotelsData.hotels.forEach(function(hotel) {
       var hotelId = hotel.id;
-      var minPrice = null;
-      var minPriceSource = null;
 
-      priceDatas.forEach(function(priceData) {
-        var price = priceData.data[hotelId];
-        
-        if (price) {
-          if (minPrice === null || price < minPrice) {
-            minPrice = price;
-            minPriceSource = priceData.name;
-          }
+      pricesApis.forEach(function(priceApi) {
+        var price = prices[priceApi][hotelId];
+
+        if ((price) && (hotel.minPrice === undefined || price < hotel.minPrice)) {
+            hotel.minPrice = price;
+          hotel.minPriceSource = priceApi;
         }
       });
-      hotel.minPrice = minPrice;
-      hotel.minPriceSource = minPriceSource;
     });
 
     res.render('index', {

@@ -13,7 +13,7 @@
         <h2> <%= hotel.name %> </h2>
         <address> <%= hotel.address %></address>
         <img src="<%= hotel.image %>"/>
-        <% if (hotel.minPrice === null){ %>
+        <% if (hotel.minPrice === undefined){ %>
           <p> All Rooms Booked </p>
         <%} else  { %>
           <p> Price: <%= hotel.minPrice %></p>
